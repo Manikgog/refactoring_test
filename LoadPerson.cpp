@@ -11,7 +11,7 @@ PersonsData {
   std::string_view name_filter;
 };
 
-std::unique_ptr<vector<Person>> LoadPersons(const DBConfigs& db_configs, const PersonsData& persons_data) {
+vector<Person> LoadPersons(const DBConfigs& db_configs, const PersonsData& persons_data) {
     DBConnector connector(db_configs.db_allow_exceptions, db_configs.db_log_level);
     DBHandler db;
     if (db_configs.db_name.starts_with("tmp."s)) {
@@ -34,5 +34,6 @@ std::unique_ptr<vector<Person>> LoadPersons(const DBConfigs& db_configs, const P
     for (auto [name, age] : db.LoadRows<string, int>(query)) {
         persons.push_back({move(name), age});
     }
-    return std::make_unique<vector<Person>>(persons);
+    
+    return move(persons);
 }
